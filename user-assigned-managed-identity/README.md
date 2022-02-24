@@ -1,9 +1,9 @@
-﻿# Connect Azure WebApp with Azure App Configuration using system managed indentity
-This is a sample to demo how to connect a .net core application hosting in Azure WebApp to Azure App Configuration. Authentication between Azure WebApp and App Configuration is system Managed Identity.
+﻿# Connect Azure WebApp with Azure App Configuration using user assigned managed indentity
+This is a sample to demo how to connect a .net core application hosting in Azure WebApp to Azure App Configuration. Authentication between Azure WebApp and App Configuration is user assigned Managed Identity.
 
 ## Prerequisite
 - An Azure account with an active subscription. You need to have Subscription Contributor role. [Create an account for free](https://azure.microsoft.com/en-in/free/).
-- Azure CLI. You can use it in [CloudShell](https://shell.azure.com) or [install it locally](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest).
+- Azure CLI. You can [install it locally](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest) or use it in [CloudShell](https://shell.azure.com).
 - Git.
 - [**Optional**] [Visual Studio](https://visualstudio.microsoft.com/downloads/) or [VSCode](https://code.visualstudio.com/download).
 
@@ -12,7 +12,7 @@ This is a sample to demo how to connect a .net core application hosting in Azure
 1. Setup Azure resources
    1. Create Azure WebApp.
    ```bash
-   # login to Azure in CLI, no need if running in Cloudshell.
+   # login to Azure CLI, skip if running in Cloudshell.
    az login
    # switch to a subscription where you have Subscription Contributor role.
    az account set -s <myTestSubsId>
@@ -22,9 +22,11 @@ This is a sample to demo how to connect a .net core application hosting in Azure
    az appservice plan create -g <myResourceGroupName> -n <myPlanName> --is-linux --sku B1
    # create webapp
    az webapp create -g <myResourceGroupName> -n <myWebAppName> --runtime "DOTNETCORE|3.1" --plan <myPlanName>
+   # [optional] skip this if have a managed identity already. create user assigned managed identity.
+   az identity create -g <myResourceGroupName> -n <myIdentityName>
    ```
    1. Create Azure App Configuration Store, import test configuration file [./sampleconfigs.json](./sampleconfigs.json).
-      If you're using Cloudshell, [upload](https://docs.microsoft.com/en-us/azure/cloud-shell/persisting-shell-storage#upload-files) [sampleconfigs.json](./sampleconfigs.json) before run the command.
+      If using Cloudshell, [upload sampleconfigs.json](https://docs.microsoft.com/en-us/azure/cloud-shell/persisting-shell-storage#upload-files) before run the command.
    ```bash
    # create app configuration store
    az appconfig create -g <myResourceGroupName> -n <myAppConfigStoreName> --sku Free -l eastus
@@ -33,38 +35,38 @@ This is a sample to demo how to connect a .net core application hosting in Azure
    ```
    
 
-1. Create connection between the WebApp and App Configuration by auth type system assigned Managed Identity via Service Connector.
+1. Create connection between the WebApp and App Configuration by auth type user assigned Managed Identity via Service Connector.
    ```bash
    # connect webapp and appconfigure
-   az webapp connection create appconfig -g <myResourceGroupName> -n <myWebAppName> --app-config <myAppConfigStoreName> --tg <myResourceGroupName> --connection <myConnectioName> --user-identity client-id=xxxx subs-id=xxxx
+   az webapp connection create appconfig -g <myResourceGroupName> -n <myWebAppName> --app-config <myAppConfigStoreName> --tg <myResourceGroupName> --connection <myConnectioName> --user-identity client-id=<myIdentityClientId> subs-id=<myTestSubsId>
    ```
-   `user-identity` is authentication type, other supported authentication types: system identity; secret; service principal. Pls refer to [more samples]().
+   `user-identity` is authentication type, other supported authentication types: system Managed Identity; connection string; service principal. Pls refer to [more samples](https://github.com/yungezz/serviceconnector-webapp-appconfig-dotnet/).
    Behind the scene, Service Connector service do the connection configuration for you. Such as, set Appsetting `AZURE_APPCONFIG_ENDPOINT`, 
-   so the application could read it to connect to the app config at [codeline](link);
-   enabled system Managed Identity on the WebApp and grant App Configuration Data Reader role to it, so the application code could [use system Managed Identity auth via `DefaultTokenCredential`](code link) to authenticated to the App Configuration.
+   so the application could read it to connect to the app config at [code](https://github.com/yungezz/serviceconnector-webapp-appconfig-dotnet/blob/main/user-assigned-managed-identity/Microsoft.Azure.ServiceConnector.Sample/Program.cs#L37);
+   enabled user Managed Identity on the WebApp and grant App Configuration Data Reader role to it, so the application code could [use user Managed Identity auth in code](https://github.com/yungezz/serviceconnector-webapp-appconfig-dotnet/blob/main/user-assigned-managed-identity/Microsoft.Azure.ServiceConnector.Sample/Program.cs#L43) via `DefaultAzureCredential` to authenticated to the App Configuration.
    Learn more about the detail from [Service Connector Internal](https://docs.microsoft.com/en-us/azure/service-connector/concept-service-connector-internals).
 
 1. Build and Deploy App to Azure. Use below steps or any approach you're familiar with to build and publish to Azure WebApp.
-   1. Clone the sample repo.
-   ```bash
-   git clone xxx
-   ```
-   1. cd to the folder ``, do build
-   ```bash
-   cd webapp-serviceconnector-samples\appConfiguration-systemAssignedManagedIdentity\Microsoft.Azure.ServiceConnector.Sample
-   dotnet publish .\Microsoft.Azure.ServiceConnector.Sample.csproj -c Release
-   ```
-   3. Deploy to the Azure Web App.
+   1. Clone the sample repo
+      ```bash
+      git clone xxx
+      ```
+   1. cd to the folder `serviceconnector-webapp-appconfig-dotnet\user-assigned-managed-identity\Microsoft.Azure.ServiceConnector.Sample`, do build
+      ```bash
+      cd serviceconnector-webapp-appconfig-dotnet\user-managed-identity\Microsoft.Azure.ServiceConnector.Sample
+      dotnet publish .\Microsoft.Azure.ServiceConnector.Sample.csproj -c Release
+      ```
+   1. Deploy to the Azure Web App.
    Recommend to use Visual Studio or VSCode.
       - Visual Studio. Open the sample solution in Visual Studio, right click on the project name, click `Publish`, follow the wizard to publish to Azure. 
         More detail at [instruction](https://docs.microsoft.com/en-us/azure/app-service/tutorial-dotnetcore-sqldb-app?toc=%2Faspnet%2Fcore%2Ftoc.json&bc=%2Faspnet%2Fcore%2Fbreadcrumb%2Ftoc.json&view=aspnetcore-6.0&tabs=azure-portal%2Cvisualstudio-deploy%2Cdeploy-instructions-azcli%2Cazure-portal-logs%2Cazure-portal-resources#4---deploy-to-the-app-service).
-      - VSCode. use VSCode. Install extension [Azure App Service extension](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azureappservice). 
+      - VSCode. Install extension [Azure App Service extension](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azureappservice). 
         Open the sample folder with VSCode, right click on the project, click `Deploy to WebApp`, follow the wizard to publish to Azure. 
         More detail at [instruction](https://docs.microsoft.com/en-us/azure/app-service/tutorial-dotnetcore-sqldb-app?toc=%2Faspnet%2Fcore%2Ftoc.json&bc=%2Faspnet%2Fcore%2Fbreadcrumb%2Ftoc.json&view=aspnetcore-6.0&tabs=azure-portal%2Cvisualstudio-deploy%2Cdeploy-instructions-azcli%2Cazure-portal-logs%2Cazure-portal-resources#4---deploy-to-the-app-service).
       - Azure CLI.
         ```bash
         # set deplyment project in Azure WebApp to this project in sample repo.
-        az webapp config appsettings set -g <myResourceGroupName> -n <myWebAppName> --settings PROJECT=appConfiguration-systemAssignedManagedIdentity/Microsoft.Azure.ServiceConnector.Sample/Microsoft.Azure.ServiceConnector.Sample.csproj
+        az webapp config appsettings set -g <myResourceGroupName> -n <myWebAppName> --settings PROJECT=user-assigned-managed-identity/Microsoft.Azure.ServiceConnector.Sample/Microsoft.Azure.ServiceConnector.Sample.csproj
         # config deployment source to local git repo
         az webapp deployment source config-local-git -g <myResourceGroupName> -n <myWebAppName>
         # get publish credential
@@ -78,25 +80,20 @@ This is a sample to demo how to connect a .net core application hosting in Azure
 
 ## Test (optional)
 1. Update value of key `SampleApplication:Settings:Messages` in the App Configuration Store.
-```bash
-az appconfig kv set -n <myAppConfigStoreName> --key SampleApplication:Settings:Messages --value hello --yes
-```
+   ```bash
+   az appconfig kv set -n <myAppConfigStoreName> --key SampleApplication:Settings:Messages --value hello --yes
+   ```
 
 1. Navigate to your Azure WebApp `https://<myWebAppName>.azurewebsites.net/`, refresh the page, you'll see the message is updated to `hello`.
 
 ## Cleanup
-Delete Azure resources created.
+After you're done, delete Azure resources created.
 ```
 az group delete -n <myResourceGroupName> --yes
 ```
 
-## Useful reference
-There're more Service Connector samples to connect Azure WebApp, Azure Spring Cloud to other Azure services, check them out!
-- xxxxx
-- Spring cloud sample repo
-Learn more about [Service Connector](https://aka.ms/scdoc).
+## Useful links
+- [More Service Connector samples](https://github.com/azure-samples?q=serviceconnector&type=all&language=&sort=) to connect Azure WebApp, Azure Spring Cloud to other Azure services.
+- Learn more about [Service Connector](https://aka.ms/scdoc).
 
 ## Troubleshooting
-
-## License
-[link]()
