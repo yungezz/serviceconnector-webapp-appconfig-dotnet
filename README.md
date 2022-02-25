@@ -5,7 +5,7 @@ languages:
 products:
 - service connector
 description: "Sample projects to connect Azure WebApp to App Configuration via Service Connector"
-urlFragment: "serviceconnector-webapp-appconfig-samples"
+urlFragment: "serviceconnector-webapp-appconfig-dotnet"
 ---
 
 # Connect Azure WebApp to App Configuration via ServiceConnector

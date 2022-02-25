@@ -56,7 +56,7 @@ This is a sample to demo how to connect a .net core application hosting in Azure
       ```
    1. cd to the folder `serviceconnector-webapp-appconfig-dotnet\user-assigned-managed-identity\Microsoft.Azure.ServiceConnector.Sample`, do build
       ```bash
-      cd serviceconnector-webapp-appconfig-dotnet\user-managed-identity\Microsoft.Azure.ServiceConnector.Sample
+      cd serviceconnector-webapp-appconfig-dotnet\user-assigned-managed-identity\Microsoft.Azure.ServiceConnector.Sample
       dotnet publish .\Microsoft.Azure.ServiceConnector.Sample.csproj -c Release
       ```
    1. Deploy to the Azure Web App.
