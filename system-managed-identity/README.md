@@ -1,7 +1,6 @@
 ﻿# Connect Azure WebApp to App Configuration using system managed indentity
 This is a sample to demo how to connect a .net core application hosting in Azure WebApp to Azure App Configuration. Authentication between Azure WebApp and App Configuration is system Managed Identity.
 
-## TOC
 - [Prerequisite](#prerequisite)
 - [How to run](#how-to-run)
 - [How it works](#how-it-works)

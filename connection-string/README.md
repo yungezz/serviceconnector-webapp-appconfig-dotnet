@@ -1,7 +1,6 @@
 ﻿# Connect Azure WebApp to App Configuration using connection string
 This is a sample to demo how to connect a .net core application hosting in Azure WebApp to Azure App Configuration via connection string.
 
-## TOC
 - [Prerequisite](#prerequisite)
 - [How to run](#how-to-run)
 - [How it works](#how-it-works)
@@ -41,7 +40,7 @@ This is a sample to demo how to connect a .net core application hosting in Azure
    ```
    
 
-1. Create connection between the WebApp and App Configuration by auth type system assigned Managed Identity via Service Connector.
+1. Create connection between the WebApp and App Configuration by auth type connection string via Service Connector.
    ```bash
    # connect webapp and appconfigure
    az webapp connection create appconfig -g <myResourceGroupName> -n <myWebAppName> --app-config <myAppConfigStoreName> --tg <myResourceGroupName> --connection <myConnectioName> --secret
@@ -53,9 +52,9 @@ This is a sample to demo how to connect a .net core application hosting in Azure
       ```bash
       git clone xxx
       ```
-   1. cd to the folder `serviceconnector-webapp-appconfig-dotnet\system-managed-identity\Microsoft.Azure.ServiceConnector.Sample`, do build
+   1. cd to the folder `serviceconnector-webapp-appconfig-dotnet\connection-string\Microsoft.Azure.ServiceConnector.Sample`, do build
       ```bash
-      cd serviceconnector-webapp-appconfig-dotnet\system-managed-identity\Microsoft.Azure.ServiceConnector.Sample
+      cd serviceconnector-webapp-appconfig-dotnet\connection-string\Microsoft.Azure.ServiceConnector.Sample
       dotnet publish .\Microsoft.Azure.ServiceConnector.Sample.csproj -c Release
       ```
    1. Deploy to the Azure Web App.
@@ -68,7 +67,7 @@ This is a sample to demo how to connect a .net core application hosting in Azure
       - Azure CLI.
         ```bash
         # set deplyment project in Azure WebApp to this project in sample repo.
-        az webapp config appsettings set -g <myResourceGroupName> -n <myWebAppName> --settings PROJECT=system-managed-identity/Microsoft.Azure.ServiceConnector.Sample/Microsoft.Azure.ServiceConnector.Sample.csproj
+        az webapp config appsettings set -g <myResourceGroupName> -n <myWebAppName> --settings PROJECT=connection-string/Microsoft.Azure.ServiceConnector.Sample/Microsoft.Azure.ServiceConnector.Sample.csproj
         # config deployment source to local git repo
         az webapp deployment source config-local-git -g <myResourceGroupName> -n <myWebAppName>
         # get publish credential

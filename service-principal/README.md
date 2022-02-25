@@ -1,7 +1,6 @@
 ﻿# Connect Azure WebApp with Azure App Configuration using service principal
 This is a sample to demo how to connect a .net core application hosting in Azure WebApp to Azure App Configuration, authenticated using service principal. The connection is setup by Service Connector service.
 
-## TOC
 - [Prerequisite](#prerequisite)
 - [How to run](#how-to-run)
 - [How it works](#how-it-works)
