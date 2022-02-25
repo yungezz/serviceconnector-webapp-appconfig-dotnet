@@ -50,7 +50,7 @@ This is a sample to demo how to connect a .net core application hosting in Azure
 1. Build and Deploy App to Azure. Use below steps or any approach you're familiar with to build and publish to Azure WebApp.
    1. Clone the sample repo
       ```bash
-      git clone xxx
+      git clone https://github.com/Azure-Samples/serviceconnector-webapp-appconfig-dotnet.git
       ```
    1. cd to the folder `serviceconnector-webapp-appconfig-dotnet\connection-string\Microsoft.Azure.ServiceConnector.Sample`, do build
       ```bash
