@@ -1,5 +1,5 @@
 ﻿# Connect Azure WebApp to App Configuration using connection string
-This is a sample to demo how to connect a .net core application hosting in Azure WebApp to Azure App Configuration via access key in connection string.
+This is a sample to demo how to connect a .net core application hosting in Azure WebApp to Azure App Configuration via connection string.
 
 ## TOC
 - [Prerequisite](#prerequisite)
