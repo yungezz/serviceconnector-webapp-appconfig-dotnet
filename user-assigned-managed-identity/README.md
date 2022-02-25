@@ -1,4 +1,4 @@
-﻿# Connect Azure WebApp with Azure App Configuration using user assigned managed indentity
+﻿# Connect Azure WebApp to App Configuration using user assigned managed indentity
 This is a sample to demo how to connect a .net core application hosting in Azure WebApp to Azure App Configuration. Authentication between Azure WebApp and App Configuration is user assigned Managed Identity.
 
 ## Prerequisite
@@ -22,7 +22,7 @@ This is a sample to demo how to connect a .net core application hosting in Azure
    az appservice plan create -g <myResourceGroupName> -n <myPlanName> --is-linux --sku B1
    # create webapp
    az webapp create -g <myResourceGroupName> -n <myWebAppName> --runtime "DOTNETCORE|3.1" --plan <myPlanName>
-   # [optional] skip this if have a managed identity already. create user assigned managed identity.
+      # [optional] skip this if have a managed identity already. create user assigned managed identity.
    az identity create -g <myResourceGroupName> -n <myIdentityName>
    ```
    1. Create Azure App Configuration Store, import test configuration file [./sampleconfigs.json](./sampleconfigs.json).
@@ -40,10 +40,10 @@ This is a sample to demo how to connect a .net core application hosting in Azure
    # connect webapp and appconfigure
    az webapp connection create appconfig -g <myResourceGroupName> -n <myWebAppName> --app-config <myAppConfigStoreName> --tg <myResourceGroupName> --connection <myConnectioName> --user-identity client-id=<myIdentityClientId> subs-id=<myTestSubsId>
    ```
-   `user-identity` is authentication type, other supported authentication types: system Managed Identity; connection string; service principal. Pls refer to [more samples](https://github.com/yungezz/serviceconnector-webapp-appconfig-dotnet/).
+   `user-identity` is authentication type, other supported authentication types: system Managed Identity; connection string; service principal, please refer to [more samples](https://github.com/yungezz/serviceconnector-webapp-appconfig-dotnet/).
    Behind the scene, Service Connector service do the connection configuration for you. Such as, set Appsetting `AZURE_APPCONFIG_ENDPOINT`, 
-   so the application could read it to connect to the app config at [code](https://github.com/yungezz/serviceconnector-webapp-appconfig-dotnet/blob/main/user-assigned-managed-identity/Microsoft.Azure.ServiceConnector.Sample/Program.cs#L37);
-   enabled user Managed Identity on the WebApp and grant App Configuration Data Reader role to it, so the application code could [use user Managed Identity auth in code](https://github.com/yungezz/serviceconnector-webapp-appconfig-dotnet/blob/main/user-assigned-managed-identity/Microsoft.Azure.ServiceConnector.Sample/Program.cs#L43) via `DefaultAzureCredential` to authenticated to the App Configuration.
+   so the application could read it to get app configuration endpoint at [code](https://github.com/yungezz/serviceconnector-webapp-appconfig-dotnet/blob/main/user-assigned-managed-identity/Microsoft.Azure.ServiceConnector.Sample/Program.cs#L37);
+   enable user Managed Identity on the WebApp and grant App Configuration Data Reader role to it, so the application code could be authenticated to the App Configuration in [code](https://github.com/yungezz/serviceconnector-webapp-appconfig-dotnet/blob/main/user-assigned-managed-identity/Microsoft.Azure.ServiceConnector.Sample/Program.cs#L43).
    Learn more about the detail from [Service Connector Internal](https://docs.microsoft.com/en-us/azure/service-connector/concept-service-connector-internals).
 
 1. Build and Deploy App to Azure. Use below steps or any approach you're familiar with to build and publish to Azure WebApp.
